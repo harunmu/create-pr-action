@@ -1,0 +1,51 @@
+name: Create PR
+description: |
+  変更したファイルをコミットし、プルリクエストを作成します。
+  プルリクエストのタイトルと本文には、コミットメッセージが使用されます。
+  パーミッションには、`contents: write` と `pull-requests: write` が必要です。
+
+inputs:
+  message:
+    required: true
+    description: コミットメッセージ
+
+outputs:
+  branch:
+    value: ${{ steps.pr.outputs.branch }}
+    description: プルリクエストのブランチ
+
+runs:
+  using: composite
+  env:
+    USERNAME: github.acrions[bot]
+    EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+    MESSAGE: ${{ inputs.message }}
+    BRANCH: auto/${{ github.run_id }}/${{ github.run_attempt }}
+    GITHUB_TOKEN: ${{ github.token }}
+
+  steps:
+
+    - name: Set outputs
+      id: pr
+      run: echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
+      shell: bash
+
+    - name: Setting up Git user
+      run: |
+        git config --global user.name "${USERNAME}"
+        git config --global user.email "${EMAIL}"
+      shell: bash
+      
+      
+    - name: Commit and Push
+      run: |
+        git switch -c "${BRANCH}"
+        git add .
+        git commit -m "${MESSAGE}"
+        git push origin "${BRANCH}"
+      shell: bash
+      
+
+    - name: Create Pull Request
+      run: gh pr create --head "${BRANCH}" --title "${MESSAGE}" --body "${MESSAGE}"
+      shell: bash
