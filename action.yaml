@@ -20,13 +20,13 @@ runs:
     USERNAME: github.acrions[bot]
     EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
     MESSAGE: ${{ inputs.message }}
-    BRANCH: auto/${{ github.run_id }}/${{ github.run_attempt }}
-    GITHUB_TOKEN: ${{ github.token }}
 
   steps:
 
     - name: Set outputs
       id: pr
+      env:
+        BRANCH: auto/${{ github.run_id }}/${{ github.run_attempt }}
       run: echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
       shell: bash
 
@@ -38,6 +38,8 @@ runs:
       
       
     - name: Commit and Push
+      env:
+        BRANCH: ${{ steps.pr.outputs.branch }}
       run: |
         git switch -c "${BRANCH}"
         git add .
@@ -47,5 +49,8 @@ runs:
       
 
     - name: Create Pull Request
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      BRANCH: ${{ steps.pr.outputs.branch }}
       run: gh pr create --head "${BRANCH}" --title "${MESSAGE}" --body "${MESSAGE}"
       shell: bash
