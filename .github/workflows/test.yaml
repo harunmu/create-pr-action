@@ -28,6 +28,7 @@ jobs:
                 test "$(gh pr view "${BRANCH}" --json title -jq.title)" = "Test"
               env:
                 BRANCH: ${{ steps.exercise.outputs.branch }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Teardown
               if: ${{ always() }}
