@@ -49,8 +49,8 @@ runs:
       
 
     - name: Create Pull Request
-    env:
-      GITHUB_TOKEN: ${{ github.token }}
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       BRANCH: ${{ steps.pr.outputs.branch }}
       run: gh pr create --head "${BRANCH}" --title "${MESSAGE}" --body "${MESSAGE}"
       shell: bash
