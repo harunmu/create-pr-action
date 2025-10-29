@@ -52,6 +52,6 @@ runs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
         MESSAGE: ${{ inputs.message }}
-      BRANCH: ${{ steps.pr.outputs.branch }}
+        BRANCH: ${{ steps.pr.outputs.branch }}
       run: gh pr create --head "${BRANCH}" --title "${MESSAGE}" --body "${MESSAGE}"
       shell: bash
