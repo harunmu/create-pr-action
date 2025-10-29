@@ -16,10 +16,6 @@ outputs:
 
 runs:
   using: composite
-  env:
-    USERNAME: github.acrions[bot]
-    EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-    MESSAGE: ${{ inputs.message }}
 
   steps:
 
@@ -31,6 +27,9 @@ runs:
       shell: bash
 
     - name: Setting up Git user
+      env:
+        USERNAME: github-actions[bot]
+        EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
       run: |
         git config --global user.name "${USERNAME}"
         git config --global user.email "${EMAIL}"
@@ -40,6 +39,7 @@ runs:
     - name: Commit and Push
       env:
         BRANCH: ${{ steps.pr.outputs.branch }}
+        MESSAGE: ${{ inputs.message }}
       run: |
         git switch -c "${BRANCH}"
         git add .
@@ -51,6 +51,7 @@ runs:
     - name: Create Pull Request
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        MESSAGE: ${{ inputs.message }}
       BRANCH: ${{ steps.pr.outputs.branch }}
       run: gh pr create --head "${BRANCH}" --title "${MESSAGE}" --body "${MESSAGE}"
       shell: bash
