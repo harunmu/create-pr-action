@@ -28,7 +28,7 @@ jobs:
                 EMAIL: 41898282+github-actions[bot]@users.norply.github.com
             - name: Create relase note
               run: |
-                version = "$(.github/scripts/bump.sh "${BUMP_LEVEL}")"
+                version="$(.github/scripts/bump.sh "${BUMP_LEVEL}")"
                 gh release create "${version}" --title "${version}" --generate-notes
               env:
                 BUMP_LEVEL: ${{ inputs.bump-level }}
