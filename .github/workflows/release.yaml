@@ -1,0 +1,35 @@
+name: Release action
+
+on:
+    workflow_dispatch:
+        inputs:
+            bump-level:
+                type: choice
+                options: [patch,minor,major]
+                required: true
+                description: Bump to patch or minor or major
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v5
+
+            - name: Set Gitbot account
+              run: |
+                git config --global user.name "${USERNAME}"
+                git config --global user.email "${EMAIL}"
+              env:
+                USERNAME: github-actions[bot]
+                EMAIL: 41898282+github-actions[bot]@users.norply.github.com
+            - name: Create relase note
+              run: |
+                version = "$(.github/scripts/bump.sh "${BUMP_LEVEL}")"
+                gh release create "${version}" --title "${version}" --generate-notes
+              env:
+                BUMP_LEVEL: ${{ inputs.bump-level }}
+              
